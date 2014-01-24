@@ -56,22 +56,10 @@ CONFIG_DEFAULTS = {
 WORK_BITS = 304  # XXX more than necessary.
 
 CHAIN_CONFIG = [
-    {"chain":"Bitcoin",
-     "code3":"BTC", "address_version":"\x00", "magic":"\xf9\xbe\xb4\xd9"},
+    {"chain":"Phoenixcoin",
+     "code3":"PXC", "address_version":"\x38", "magic":"\xfb\xc0\xb6\xdb"},
     {"chain":"Testnet",
-     "code3":"BC0", "address_version":"\x6f", "magic":"\xfa\xbf\xb5\xda"},
-    {"chain":"Namecoin",
-     "code3":"NMC", "address_version":"\x34", "magic":"\xf9\xbe\xb4\xfe"},
-    {"chain":"Weeds", "network":"Weedsnet",
-     "code3":"WDS", "address_version":"\xf3", "magic":"\xf8\xbf\xb5\xda"},
-    {"chain":"BeerTokens",
-     "code3":"BER", "address_version":"\xf2", "magic":"\xf7\xbf\xb5\xdb"},
-    {"chain":"SolidCoin",
-     "code3":"SCN", "address_version":"\x7d", "magic":"\xde\xad\xba\xbe"},
-    {"chain":"ScTestnet",
-     "code3":"SC0", "address_version":"\x6f", "magic":"\xca\xfe\xba\xbe"},
-    {"chain":"Worldcoin",
-     "code3":"WDC", "address_version":"\x49", "magic":"\xfb\xc0\xb6\xdb"},
+     "code3":"PXt", "address_version":"\x6f", "magic":"\xff\xc4\xba\xdf"},
     #{"chain":"",
     # "code3":"", "address_version":"\x", "magic":""},
     ]
@@ -666,7 +654,7 @@ class DataStore(object):
                 "loader": loader}
 
         # By default, scan every dir we know.  This doesn't happen in
-        # practise, because abe.py sets ~/.bitcoin as default datadir.
+        # practise, because abe.py sets ~/.phoenixcoin as default datadir.
         if store.args.datadir is None:
             store.datadirs = datadirs.values()
             return
@@ -2660,7 +2648,7 @@ store._ddl['txout_approx'],
         chain_ids = frozenset([chain_id])
 
         conffile = dircfg.get("conf",
-                              os.path.join(dircfg['dirname'], "bitcoin.conf"))
+                              os.path.join(dircfg['dirname'], "phoenixcoin.conf"))
         try:
             conf = dict([line.strip().split("=", 1)
                          if "=" in line
@@ -2675,7 +2663,7 @@ store._ddl['txout_approx'],
         rpcpassword = conf["rpcpassword"]
         rpcconnect  = conf.get("rpcconnect", "127.0.0.1")
         rpcport     = conf.get("rpcport",
-                               "18332" if "testnet" in conf else "8332")
+                               "19554" if "testnet" in conf else "9554")
         url = "http://" + rpcuser + ":" + rpcpassword + "@" + rpcconnect \
             + ":" + rpcport
 
