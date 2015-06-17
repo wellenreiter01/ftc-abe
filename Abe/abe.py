@@ -39,7 +39,7 @@ import base58
 
 __version__ = version.__version__
 
-APPNAME = "Phoenixcoin"
+APPNAME = "Feathercoin"
 ABE_APPNAME = "Abe"
 ABE_VERSION = __version__
 ABE_URL = 'https://github.com/bitcoin-abe/bitcoin-abe'
@@ -62,7 +62,7 @@ DEFAULT_TEMPLATE = """
 </head>
 <body bgcolor="#f9f9d2">
     <center>
-    <a href=\"%(dotdot)s%(HOMEPAGE)s\"><img src=\"%(dotdot)s%(STATIC_PATH)slogo32.png\" alt=\"Phoenixcoin logo\" vspace=\"10\"></a>
+    <a href=\"%(dotdot)s%(HOMEPAGE)s\"><img src=\"%(dotdot)s%(STATIC_PATH)slogo32.png\" alt=\"Feathercoin logo\" vspace=\"10\"></a>
     <h1><a href=\"%(dotdot)s%(HOMEPAGE)s\"></a>
     %(h1)s
     </h1>

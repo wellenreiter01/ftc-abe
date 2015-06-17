@@ -56,10 +56,10 @@ CONFIG_DEFAULTS = {
 WORK_BITS = 304  # XXX more than necessary.
 
 CHAIN_CONFIG = [
-    {"chain":"Phoenixcoin",
-     "code3":"PXC", "address_version":"\x38", "magic":"\xfb\xc0\xb6\xdb"},
-    {"chain":"Testnet",
-     "code3":"PXt", "address_version":"\x6f", "magic":"\xff\xc4\xba\xdf"},
+ #   {"chain":"Phoenixcoin",
+ #    "code3":"PXC", "address_version":"\x38", "magic":"\xfb\xc0\xb6\xdb"},
+ #   {"chain":"Testnet",
+ #    "code3":"PXt", "address_version":"\x6f", "magic":"\xff\xc4\xba\xdf"},
     #{"chain":"",
     # "code3":"", "address_version":"\x", "magic":""},
     ]
@@ -2648,7 +2648,7 @@ store._ddl['txout_approx'],
         chain_ids = frozenset([chain_id])
 
         conffile = dircfg.get("conf",
-                              os.path.join(dircfg['dirname'], "phoenixcoin.conf"))
+                              os.path.join(dircfg['dirname'], "feathercoin.conf"))
         try:
             conf = dict([line.strip().split("=", 1)
                          if "=" in line
@@ -2663,7 +2663,7 @@ store._ddl['txout_approx'],
         rpcpassword = conf["rpcpassword"]
         rpcconnect  = conf.get("rpcconnect", "127.0.0.1")
         rpcport     = conf.get("rpcport",
-                               "19554" if "testnet" in conf else "9554")
+                               "19337" if "testnet" in conf else "9337")
         url = "http://" + rpcuser + ":" + rpcpassword + "@" + rpcconnect \
             + ":" + rpcport
 
