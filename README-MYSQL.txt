@@ -31,8 +31,10 @@ replacing "PASSWORD" with a password you choose:
     connect-args {"user":"abe","db":"abe","passwd":"PASSWORD"}
     upgrade
     port 2750
-
-7. Perform the initial data load:
+    
+7.  configure the correct feathercoin data direcory in ftc.conf
+    
+7a. Perform the initial data load:
 
     python -m Abe.abe --config abe-my.conf --commit-bytes 100000 --no-serve
 
@@ -41,11 +43,11 @@ Look for output such as:
     block_tx 1 1
     block_tx 2 2
     ...
-7a.  IMPORTANT: after you have imported some blocks stop the import by hitting ctrl-c and modify ftc-conf.
+7b.  IMPORTANT: after you have imported some blocks stop the import by hitting ctrl-c and modify ftc-conf.
      Change the line 
 
 
-	  "loader": "default",
+	  "loader": "blkfile",
    
    to 
 	   "loader": "rpc",
@@ -54,7 +56,7 @@ Look for output such as:
      import the genesis block. The genesis block can't be retrieved using rpc calls to feathercoind.
      and Neoscrypt is supported only though rpc based connections to the feathercoin network 	   
 	   
-7b. Start the programm again :
+7c. Start the programm again :
       python -m Abe.abe --config abe-my.conf --commit-bytes 100000 --no-serve
 
 This step may take several days depending on chain size and hardware.
