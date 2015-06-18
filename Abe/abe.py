@@ -280,7 +280,7 @@ class Abe:
         body = page['body']
         body += [
             abe.search_form(page),
-            '<table>\n',
+            '<table class="chain_table">\n',
             '<tr><th>Currency</th><th>Code</th><th>Block</th><th>Time</th>',
             '<th>Started</th><th>Age (days)</th><th>Coins Created</th>',
             '</tr>\n']
@@ -358,7 +358,7 @@ class Abe:
              WHERE chain_name = ?""", (symbol,)))
 
     def get_default_chain(abe):
-        return abe.chain_lookup_by_name('Bitcoin')
+        return abe.chain_lookup_by_name('Feathercoin')
 
     def chain_lookup_by_id(abe, chain_id):
         return abe._row_to_chain(abe.store.selectrow("""
@@ -461,7 +461,7 @@ class Abe:
         extra = False
         #extra = True
         body += ['<p>', nav, '</p>\n',
-                 '<table><tr><th>Block</th><th>Approx. Time</th>',
+                 '<table class="block_table"><tr><th>Block</th><th>Approx. Time</th>',
                  '<th>Transactions</th><th>Value Out</th>',
                  '<th>Difficulty</th><th>Outstanding</th>',
                  '</tr>\n']
@@ -562,36 +562,42 @@ class Abe:
 
         body += abe.short_link(page, 'b/' + block_shortlink(block_hash))
 
-        body += ['<br />\n','<p>Hash: ', block_hash, '<br />\n']
+        body += [
+	  '<table class=chain_navigation >',
+	  '<caption class="table_headline"> <h3>Navigation</h3></caption>'
+	  '<tbody>\n'
+	  '<tr><td> Hash:</td><td>', block_hash,'</td></tr>\n'
+	  ]
 
         if prev_block_hash is not None:
-            body += ['Previous Block: <a href="', dotdotblock,
-                     prev_block_hash, '">', prev_block_hash, '</a><br />\n']
+            body += ['<tr><td> Previous Block:</td><td> <a href="', dotdotblock,
+                     prev_block_hash, '">', prev_block_hash, '</a></td></tr>\n'
+                     ]
         if next_list:
-            body += ['Next Block: ']
+            body += ['<tr><td> Next Block:</td><td>']
         for row in next_list:
             hash = abe.store.hashout_hex(row[0])
-            body += ['<a href="', dotdotblock, hash, '">', hash, '</a><br />\n']
+            body += [
+		      '<a href="', dotdotblock, hash, '">', hash, '</a></td></tr>\n'
+		      '</tbody></table>\n'     
+		     ]
 
         body += [
-            'Transaction Merkle Root: ', hashMerkleRoot, '<br />\n',
-            '<br />\n',
-            'Time: ', nTime, ' (', format_time(nTime), ')<br />\n',
-            'Difficulty: ', format_difficulty(util.calculate_difficulty(nBits)),
-            ' (Bits: %x)' % (nBits,), '<br />\n',
-            'Nonce: ', nNonce, '<br />\n',
-            '<br />\n',
-            'Transactions: ', num_tx, '<br />\n',
-            'Value out: ', format_satoshis(value_out, chain), '<br />\n',
-            '<br />\n',
-            'Height: ', height, '<br />\n',
-            'Version: ', block_version,
-            '<br />\n',
+	    '<table class=block_detail> '
+	    '<caption class="table_headline"> <h3>Block Details</h3></caption>'	
+            '<tr><td>Transaction Merkle Root:</td><td>', hashMerkleRoot, '</td></tr>\n',
+            '<tr><td>Time:</td><td>', nTime, ' (', format_time(nTime), ')</td></tr>\n',
+            '<tr><td>Difficulty:</td><td>', format_difficulty(util.calculate_difficulty(nBits)),
+            ' (Bits: %x)' % (nBits,), '</td></tr>\n',
+            '<tr><td>Nonce:</td><td>', nNonce, '</td></tr>\n',
+            '<tr><td>Transactions:</td><td>', num_tx, '</td></tr>\n',
+            '<tr><td>Value out:</td><td>', format_satoshis(value_out, chain), '</td></tr>\n',
+            '<tr><td>Height:</td><td>', height, '</td></tr>\n',
+            '<tr><td>Version:</td><td>', block_version,'</td></tr>'
+            '</table>'
+            ]
 
-            '</p>\n']
-
-        body += ['<h3>Transactions</h3>\n']
-
+        
         tx_ids = []
         txs = {}
         block_out = 0
@@ -656,7 +662,9 @@ class Abe:
                     "pubkey_hash": pubkey_hash,
                     })
 
-        body += ['<table><tr><th>Transaction</th><th>Fee</th>'
+        body += ['<table class="transaction_table">'
+	         '<caption class="table_headline"> <h3>Transactions</h3></caption>'
+		 ' <tr><th>Transaction</th><th>Fee</th>'
                  '<th>Size (Kb)</th><th>From (amount)</th><th>To (amount)</th>'
                  '</tr>\n']
         for tx_id in tx_ids:
@@ -1082,7 +1090,7 @@ class Abe:
 
         body += ['</p>\n'
                  '<h3>Transactions</h3>\n'
-                 '<table>\n<tr><th>Transaction</th><th>Block</th>'
+                 '<table class="transaction_table">\n<tr><th>Transaction</th><th>Block</th>'
                  '<th>Approx. Time</th><th>Amount</th><th>Balance</th>'
                  '<th>Currency</th></tr>\n']
 
@@ -1108,13 +1116,15 @@ class Abe:
     def search_form(abe, page):
         q = (page['params'].get('q') or [''])[0]
         return [
+	    '<div class=search>'
             '<p>Search by address, block number or hash, transaction or'
             ' public key hash:</p>\n'
             '<form action="', page['dotdot'], 'search">\n'
             '<p><input name="q" size="64" value="', escape(q), '" />'
             '<button type="submit">Search</button></p>\n'
             '<p>Address or hash search requires at least the first ',
-            HASH_PREFIX_MIN, ' characters.</p></form>\n']
+            HASH_PREFIX_MIN, ' characters.</p></form>\n'
+            '</div>']
 
     def handle_search(abe, page):
         page['title'] = 'Search'
