@@ -14,7 +14,21 @@ h1 {
   padding-top: 0px;
 }
   
-
+.button {
+    width: 60px;
+    height: 20px;
+    font-weight:bold;
+    /* green to blue  gradient,top to bottom */
+    background-image: linear-gradient(#1ed91e, #62e39f 40%, #e6f3fb);
+    border-top-left-radius: 12px; border-top-right-radius: 12px;
+    border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
+    margin-left:auto;
+    margin-right:auto;
+    padding-left:15px;
+    padding-top: 1px;
+}
+    
+    
 .search {
     width: 200px;
     height: 40px;
