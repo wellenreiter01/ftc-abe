@@ -28,6 +28,8 @@ h1 {
 input { 
   background:#8bd3fd;
   border-color: #8bd3fd;
+  border-top-left-radius: 12px; border-top-right-radius: 12px;
+  border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
 }
 
 img {
@@ -64,6 +66,7 @@ table {
 .table_headline {
   width: 25%;
   margin-bottom: 5px;
+  margin-top:1px;
   margin-left: 38%;
   font-weight: bold;
   /* green to blue  gradient,top to bottom */
