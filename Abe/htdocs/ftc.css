@@ -1,0 +1,68 @@
+div { 
+    background-image: linear-gradient(#1D9CE5, #2FA4E7 60%, #1D9CE5);
+    text-align: center;
+    border-top-left-radius: 12px; border-top-right-radius: 12px;
+    border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
+}
+
+div.search {
+    width: 60%;
+    background: #fbff80;
+}
+
+.site-logo {
+  float:left;
+  max-height:40px;
+  width:auto;
+  margin-top:5px;
+}
+.navbar {
+    background-image: linear-gradient(#54B4EB, #2FA4E7 60%, #1D9CE5);
+}
+
+h1 {
+    text-align: center;
+}
+
+
+
+
+table {
+  background: #ddd;
+}
+.table_headline {
+  width: 40%;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  margin-left: 30%;
+  background: inherit;
+  border-top-left-radius: 12px; border-top-right-radius: 12px;
+  border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
+}
+.block_table, .chain_table, .chain_navigation,.block_detail, .transaction_table {
+   width: 80%;
+   border-width: 0px;
+   background-image: linear-gradient(#26acf9, #8bd3fd 50%, #e6f3fb);
+   border-top-left-radius: 12px; border-top-right-radius: 12px;
+   border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
+}
+  
+td, th {
+    font-family: Verdana, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0 1ex;
+}
+th {
+    padding-bottom: 5px;
+    text-align: left;
+}
+td {
+    border-width: 0px;
+    border-style: solid;
+}
+table {
+    border-spacing: 0;
+}
+.shortlink {
+    font-size: smaller;
+}
