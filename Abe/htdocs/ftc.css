@@ -1,47 +1,83 @@
 div { 
     background-image: linear-gradient(#1D9CE5, #2FA4E7 60%, #1D9CE5);
-    text-align: center;
-    border-top-left-radius: 12px; border-top-right-radius: 12px;
+   /* text-align: center;*/
+  border-top-left-radius: 12px; border-top-right-radius: 12px;
     border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
 }
 
-div.search {
-    width: 60%;
-    background: #fbff80;
+h1 {
+  color: #fff;
+  text-align:center;  
+  height: 30px;
+  margin:0px;
+  padding: 0px;
+  padding-top: 0px;
+}
+  
+
+.search {
+    width: 200px;
+    height: 40px;
+    margin-right: 15px;
+    padding-top: 18px;
+    margin-left:auto;
+   
+    
 }
 
-.site-logo {
+input { 
+  background:#8bd3fd;
+  border-color: #8bd3fd;
+}
+
+img {
   float:left;
+  margin-left:10px;
   max-height:40px;
   width:auto;
-  margin-top:5px;
+  margin-top:8px;
 }
 .navbar {
     background-image: linear-gradient(#54B4EB, #2FA4E7 60%, #1D9CE5);
+    border-top-left-radius: 12px; border-top-right-radius: 12px;
+    border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
+    /* center navbar class */
+    margin-left:auto;
+    margin-right:auto;
+    padding: 2px;
+    
 }
 
-h1 {
-    text-align: center;
+p, p.info,.shortlink {
+    padding:3px;
+    font-size: smaller;
+    text-align:center;    
 }
-
 
 
 
 table {
   background: #ddd;
+  border-spacing: 0;
 }
+
 .table_headline {
-  width: 40%;
-  margin-top: 10px;
+  width: 25%;
   margin-bottom: 5px;
-  margin-left: 30%;
-  background: inherit;
+  margin-left: 38%;
+  font-weight: bold;
+  /* green to blue  gradient,top to bottom */
+  background-image: linear-gradient(#1ed91e, #62e39f 40%, #e6f3fb);
   border-top-left-radius: 12px; border-top-right-radius: 12px;
   border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
 }
-.block_table, .chain_table, .chain_navigation,.block_detail, .transaction_table {
+.block_table, .chain_table, .chain_navigation,.block_detail, .transaction_table, .wallet_info {
    width: 80%;
    border-width: 0px;
+   margin-top:20px;
+   margin-left:auto;
+   margin-right: auto;
+   /* Blue  gradient, going to near white at bottom */
    background-image: linear-gradient(#26acf9, #8bd3fd 50%, #e6f3fb);
    border-top-left-radius: 12px; border-top-right-radius: 12px;
    border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
@@ -60,9 +96,5 @@ td {
     border-width: 0px;
     border-style: solid;
 }
-table {
-    border-spacing: 0;
-}
-.shortlink {
-    font-size: smaller;
-}
+
+

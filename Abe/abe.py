@@ -235,6 +235,8 @@ class Abe:
 
             tvars = abe.template_vars.copy()
             tvars['dotdot'] = page['dotdot']
+            
+            
             page['template_vars'] = tvars
 
             handler(page)
@@ -263,6 +265,8 @@ class Abe:
         tvars['title'] = flatten(page['title'])
         tvars['h1'] = flatten(page.get('h1') or page['title'])
         tvars['body'] = flatten(page['body'])
+        tvars['search'] = flatten(abe.search_form(page))
+       
         if abe.args.auto_agpl:
             tvars['download'] = (
                 ' <a href="' + page['dotdot'] + 'download">Source</a>')
@@ -279,7 +283,6 @@ class Abe:
         page['title'] = APPNAME + ' Block Explorer'
         body = page['body']
         body += [
-            abe.search_form(page),
             '<table class="chain_table">\n',
             '<tr><th>Currency</th><th>Code</th><th>Block</th><th>Time</th>',
             '<th>Started</th><th>Age (days)</th><th>Coins Created</th>',
@@ -390,9 +393,8 @@ class Abe:
         page['title'] = chain['name']
 
         body = page['body']
-        body += abe.search_form(page)
 
-        count = get_int_param(page, 'count') or 20
+        count = get_int_param(page, 'count') or 10
         hi = get_int_param(page, 'hi')
         orig_hi = hi
 
@@ -432,21 +434,23 @@ class Abe:
         if hi is None:
             hi = int(rows[0][1])
         basename = os.path.basename(page['env']['PATH_INFO'])
+        
+        nav= ['<table class="navbar"><tr>']
 
-        nav = ['<a href="',
-               basename, '?count=', str(count), '">&lt;&lt;</a>']
-        nav += [' <a href="', basename, '?hi=', str(hi + count),
-                 '&amp;count=', str(count), '">&lt;</a>']
+        nav += ['<td><a href="',
+               basename, '?count=', str(count), '">&lt;&lt;</a></td>']
+        nav += ['<td> <a href="', basename, '?hi=', str(hi + count),
+                 '&amp;count=', str(count), '">&lt;</a></td>']
         nav += [' ', '&gt;']
         if hi >= count:
-            nav[-1] = ['<a href="', basename, '?hi=', str(hi - count),
-                        '&amp;count=', str(count), '">', nav[-1], '</a>']
+            nav[-1] = ['<td><a href="', basename, '?hi=', str(hi - count),
+                        '&amp;count=', str(count), '">', nav[-1], '</a></td>']
         nav += [' ', '&gt;&gt;']
         if hi != count - 1:
-            nav[-1] = ['<a href="', basename, '?hi=', str(count - 1),
-                        '&amp;count=', str(count), '">', nav[-1], '</a>']
-        for c in (20, 50, 100):
-            nav += [' ']
+            nav[-1] = ['<td><a href="', basename, '?hi=', str(count - 1),
+                        '&amp;count=', str(count), '">', nav[-1], '</a></td>']
+        for c in (10, 50, 100):
+            nav += ['<td> ']
             if c != count:
                 nav += ['<a href="', basename, '?count=', str(c)]
                 if hi is not None:
@@ -454,14 +458,14 @@ class Abe:
                 nav += ['">']
             nav += [' ', str(c)]
             if c != count:
-                nav += ['</a>']
+                nav += ['</a></td>']
 
-        nav += [' <a href="', page['dotdot'], '">Search</a>']
+        nav += ['</tr></table>']
 
         extra = False
         #extra = True
         body += ['<p>', nav, '</p>\n',
-                 '<table class="block_table"><tr><th>Block</th><th>Approx. Time</th>',
+                 '<table class="block_table"><caption class="table_headline"> Latest Blocks </caption><tr><th>Block</th><th>Approx. Time</th>',
                  '<th>Transactions</th><th>Value Out</th>',
                  '<th>Difficulty</th><th>Outstanding</th>',
                  '</tr>\n']
@@ -564,7 +568,7 @@ class Abe:
 
         body += [
 	  '<table class=chain_navigation >',
-	  '<caption class="table_headline"> <h3>Navigation</h3></caption>'
+	  '<caption class="table_headline">Navigation</caption>'
 	  '<tbody>\n'
 	  '<tr><td> Hash:</td><td>', block_hash,'</td></tr>\n'
 	  ]
@@ -584,7 +588,7 @@ class Abe:
 
         body += [
 	    '<table class=block_detail> '
-	    '<caption class="table_headline"> <h3>Block Details</h3></caption>'	
+	    '<caption class="table_headline"> Block Details</caption>'	
             '<tr><td>Transaction Merkle Root:</td><td>', hashMerkleRoot, '</td></tr>\n',
             '<tr><td>Time:</td><td>', nTime, ' (', format_time(nTime), ')</td></tr>\n',
             '<tr><td>Difficulty:</td><td>', format_difficulty(util.calculate_difficulty(nBits)),
@@ -663,7 +667,7 @@ class Abe:
                     })
 
         body += ['<table class="transaction_table">'
-	         '<caption class="table_headline"> <h3>Transactions</h3></caption>'
+	         '<caption class="table_headline">Transactions</caption>'
 		 ' <tr><th>Transaction</th><th>Fee</th>'
                  '<th>Size (Kb)</th><th>From (amount)</th><th>To (amount)</th>'
                  '</tr>\n']
@@ -1022,7 +1026,7 @@ class Abe:
 
         if too_many:
             body += ["<p>I'm sorry, this address has too many records"
-                     " to display.</p>"]
+                     'to display.</p> <div class="button"><a href="/"> Back</a></div>']
             return
 
         rows = []
@@ -1077,21 +1081,24 @@ class Abe:
             link = address[0 : abe.shortlink_type]
         body += abe.short_link(page, 'a/' + link)
 
-        body += ['<br />\n','<p>Balance: '] + format_amounts(balance, True)
+        body += ['<table class="wallet_info">'
+		 '<caption class="table_headline">Wallet Info </caption>'
+		 '<tr><td>Balance:</td><td>',format_amounts(balance, True),'</td></tr>'
+		 ]
 
         for chain_id in chain_ids:
             balance[chain_id] = 0  # Reset for history traversal.
 
-        body += ['<br />\n',
-                 'Received: ', format_amounts(received, False), '<br />\n',
-                 'Sent: ', format_amounts(sent, False), '<br />\n', '<br />\n',
-                 'Transactions in: ', count[0], '<br />\n',
-                 'Transactions out: ', count[1], '<br />\n']
+        body += [
+                 '<tr><td>Received:</td><td>', format_amounts(received, False), '</td></tr>\n',
+                 '<tr><td>Sent:</td><td>', format_amounts(sent, False), '</td></tr>\n',
+                 '<tr><td>Transactions in:</td><td>', count[0], '</td></tr>\n',
+                 '<tr><td>Transactions out:</td><td>', count[1], '</td></tr>']
 
-        body += ['</p>\n'
-                 '<h3>Transactions</h3>\n'
-                 '<table class="transaction_table">\n<tr><th>Transaction</th><th>Block</th>'
-                 '<th>Approx. Time</th><th>Amount</th><th>Balance</th>'
+        body += ['<table class="transaction_table">\n'
+		 '<caption class="table_headline"> Transactions</caption>\n'
+		 '<tr><th>Transaction</th><th>Block</th>\n'
+                 '<th>Approx. Time</th><th>Amount</th><th>Balance</th>\n'
                  '<th>Currency</th></tr>\n']
 
         for elt in txpoints:
@@ -1115,23 +1122,17 @@ class Abe:
 
     def search_form(abe, page):
         q = (page['params'].get('q') or [''])[0]
-        return [
-	    '<div class=search>'
-            '<p>Search by address, block number or hash, transaction or'
-            ' public key hash:</p>\n'
-            '<form action="', page['dotdot'], 'search">\n'
-            '<p><input name="q" size="64" value="', escape(q), '" />'
-            '<button type="submit">Search</button></p>\n'
-            '<p>Address or hash search requires at least the first ',
-            HASH_PREFIX_MIN, ' characters.</p></form>\n'
-            '</div>']
+        return  '<form class="search" action="'+ page['dotdot']+ 'search">'+\
+            '<input name="q" placeholder="address, block number/hash, transaction"' +\
+             'size"=48" maxlength="64" value="'+ escape(q)+ '" /> </form>' 
+	
 
     def handle_search(abe, page):
         page['title'] = 'Search'
         q = (page['params'].get('q') or [''])[0]
         if q == '':
             page['body'] = [
-                '<p>Please enter search terms.</p>\n', abe.search_form(page)]
+                '<p>Please enter search terms.</p>\n']
             return
 
         found = []
@@ -1145,7 +1146,7 @@ class Abe:
     def show_search_results(abe, page, found):
         if not found:
             page['body'] = [
-                '<p>No results found.</p>\n', abe.search_form(page)]
+                '<p>No results found.</p>\n']
             return
 
         if len(found) == 1:
