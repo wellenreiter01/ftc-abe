@@ -1,6 +1,6 @@
 Abe setup for MySQL: 8 easy steps.
 
-1. Run the Bitcoin client once.  It'll create a .bitcoin directory in
+1. Run the Featheercoin client once.  It'll create a .feathercoin directory in
 your home directory, along with some other necessary files.
 
 2. Install Python 2.7 and pycrypto and python-mysqldb.  The Debian/Ubuntu packages 
@@ -24,15 +24,17 @@ replacing "PASSWORD" with a password you choose:
     CREATE USER 'abe'@'localhost' IDENTIFIED BY 'PASSWORD';
     grant all on abe.* to abe;
 
-6. Create file abe-my.conf with the following contents, replacing
+6. Create file ftc.conf with the following contents, replacing
 "PASSWORD" as above:
 
     dbtype MySQLdb
     connect-args {"user":"abe","db":"abe","passwd":"PASSWORD"}
     upgrade
     port 2750
-
-7. Perform the initial data load:
+    
+7.  configure the correct feathercoin data direcory in ftc.conf
+    
+7a. Perform the initial data load:
 
     python -m Abe.abe --config abe-my.conf --commit-bytes 100000 --no-serve
 
@@ -41,6 +43,21 @@ Look for output such as:
     block_tx 1 1
     block_tx 2 2
     ...
+7b.  IMPORTANT: after you have imported some blocks stop the import by hitting ctrl-c and modify ftc-conf.
+     Change the line 
+
+
+	  "loader": "blkfile",
+   
+   to 
+	   "loader": "rpc",
+	   
+     Reason: Initially a file based connection directly accessing the block files is required in order to 
+     import the genesis block. The genesis block can't be retrieved using rpc calls to feathercoind.
+     and Neoscrypt is supported only though rpc based connections to the feathercoin network 	   
+	   
+7c. Start the programm again :
+      python -m Abe.abe --config abe-my.conf --commit-bytes 100000 --no-serve
 
 This step may take several days depending on chain size and hardware.
 
