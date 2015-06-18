@@ -19,7 +19,7 @@ Install required packages:
 
 Change directory to the Abe distribution and install Abe:
 
-    cd bitcoin-abe
+    cd ftc-abe
     python setup.py install
 
 Replace YOUR.ABE.DOMAIN below with a domain that resolves to this
