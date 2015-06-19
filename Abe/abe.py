@@ -117,7 +117,8 @@ NETHASH_SVG_TEMPLATE = """\
      xmlns:abe="http://abe.bit/abe"
      viewBox="0 0 1 100"
      preserveAspectRatio="none"
-     onload="Abe.draw(this)">
+    <!-- onload="Abe.draw(this)"> -->
+     >
 
   <style>
     #chart polyline { stroke-width: 0.1%%; fill-opacity: 0; }
@@ -132,6 +133,8 @@ NETHASH_SVG_TEMPLATE = """\
     <polyline abe:window="7d" style="stroke: yellow;"/>
     <polyline abe:window="14d" style="stroke: green;"/>
     <polyline abe:window="30d" style="stroke: blue;"/>
+    <script type="application/ecmascript">
+onload="Abe.draw(this) />
 
 %(body)s
 
@@ -244,7 +247,7 @@ class Abe:
             status = '404 Not Found'
             page["body"] = ['<p class="error">Sorry, ', env['SCRIPT_NAME'],
                             env['PATH_INFO'],
-                            ' does not exist on this server.</p>']
+                            ' does not exist on this server.</p><div class="button"><a href="/"> Back</a></div>']
         except NoSuchChainError, e:
             page['body'] += [
                 '<p class="error">'
@@ -517,7 +520,7 @@ class Abe:
              WHERE """ + where
         row = abe.store.selectrow(sql, bind)
         if (row is None):
-            body += ['<p class="error">Block not found.</p>']
+            body += ['<p class="error">Block not found.</p><div class="button"><a href="/"> Back</a></div>']
             return
         (block_id,
          block_hash,
@@ -711,7 +714,7 @@ class Abe:
         page['title'] = 'Block'
 
         if not is_hash_prefix(block_hash):
-            page['body'] += ['<p class="error">Not a valid block hash.</p>']
+            page['body'] += ['<p class="error">Not a valid block hash.</p><div class="button"><a href="/"> Back</a></div>']
             return
 
         # Try to show it as a block number, not a block hash.
@@ -746,7 +749,7 @@ class Abe:
         body = page['body']
 
         if not is_hash_prefix(tx_hash):
-            body += ['<p class="error">Not a valid transaction hash.</p>']
+            body += ['<p class="error">Not a valid transaction hash.</p><div class="button"><a href="/"> Back</a></div>']
             return
 
         row = abe.store.selectrow("""
@@ -755,7 +758,7 @@ class Abe:
              WHERE tx_hash = ?
         """, (abe.store.hashin_hex(tx_hash),))
         if row is None:
-            body += ['<p class="error">Transaction not found.</p>']
+            body += ['<p class="error">Transaction not found.</p><div class="button"><a href="/"> Back</a></div>']
             return
         tx_id, tx_version, tx_lockTime, tx_size = (
             int(row[0]), int(row[1]), int(row[2]), int(row[3]))

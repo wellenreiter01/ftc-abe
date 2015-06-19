@@ -42,8 +42,8 @@ h1 {
 input { 
   background:#8bd3fd;
   border-color: #8bd3fd;
-  border-top-left-radius: 12px; border-top-right-radius: 12px;
-  border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
+  border-top-left-radius: 6px; border-top-right-radius: 6px;
+  border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;
 }
 
 img {
@@ -68,6 +68,11 @@ p, p.info,.shortlink {
     padding:3px;
     font-size: smaller;
     text-align:center;    
+}
+
+a {
+  /* don't underline hyperlinks */
+  text-decoration:none;
 }
 
 
