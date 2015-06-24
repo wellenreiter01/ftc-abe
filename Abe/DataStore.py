@@ -2675,6 +2675,7 @@ store._ddl['txout_approx'],
                 store.rpclog.info("RPC<< %s",
                                   re.sub(r'\[[^\]]{100,}\]', '[...]', str(ret)))
             return ret
+	  
 
         def get_blockhash(height):
             try:
@@ -2719,7 +2720,7 @@ store._ddl['txout_approx'],
             tx = store.parse_tx(rpc_tx)
             tx['hash'] = tx_hash
             return tx
-
+        
         try:
 
             # Get block hash at height, and at the same time, test

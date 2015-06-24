@@ -944,7 +944,7 @@ class Abe:
         page['title'] = 'Address ' + escape(address)
         version, binaddr = util.decode_check_address(address)
         if binaddr is None:
-            body += ['<p>Not a valid address.</p>']
+            body += ['<p>Not a valid address.</p><div class="button"><a href="/"> Home</a></div>']
             return
 
         dbhash = abe.store.binin(binaddr)
@@ -1000,6 +1000,9 @@ class Abe:
         too_many = False
         if max_rows >= 0 and len(in_rows) > max_rows:
             too_many = True
+            # TODO add code to display wallet balance only,instead of 
+            #returning an error
+	  
 
         if not too_many:
             out_rows = abe.store.selectall("""
@@ -1028,8 +1031,8 @@ class Abe:
                 too_many = True
 
         if too_many:
-            body += ["<p>I'm sorry, this address has too many records"
-                     'to display.</p> <div class="button"><a href="/"> Back</a></div>']
+            body += ["<p>I'm sorry, this address has too many records "
+                     'to display.</p> <div class="button"><a href="/"> Home</a></div>']
             return
 
         rows = []
@@ -1125,9 +1128,9 @@ class Abe:
 
     def search_form(abe, page):
         q = (page['params'].get('q') or [''])[0]
-        return  '<form class="search" action="'+ page['dotdot']+ 'search">'+\
+        return  '<form class="search" name="searchform" action="'+ page['dotdot']+ 'search">'+\
             '<input name="q" placeholder="address, block number/hash, transaction"' +\
-             'size"=48" maxlength="64" value="'+ escape(q)+ '" /> </form>' 
+             'size"=48" maxlength="64" value="'+ escape(q)+ '" /> <i class="fa fa-search fa-fw" onclick= document.searchform.submit()></i> </form>' 
 	
 
     def handle_search(abe, page):
@@ -1135,7 +1138,7 @@ class Abe:
         q = (page['params'].get('q') or [''])[0]
         if q == '':
             page['body'] = [
-                '<p>Please enter search terms.</p>\n']
+                '<p>Please enter search terms.</p></p><div class="button"><a href="/"> Home </a></div>\n']
             return
 
         found = []
@@ -1149,7 +1152,7 @@ class Abe:
     def show_search_results(abe, page, found):
         if not found:
             page['body'] = [
-                '<p>No results found.</p>\n']
+                '<p>No results found.</p><div class="button"><a href="/"> Home </a></div>\n']
             return
 
         if len(found) == 1:
