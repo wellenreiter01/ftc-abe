@@ -5,13 +5,19 @@ div {
     border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
 }
 
-h1 {
-  color: #fff;
-  text-align:center;  
+.error {
+  background:#f9cec7;
+  text-color:#ed2020;
+}
+h1.header_top {
+  color: #fff; 
   height: 30px;
+  font-weight: normal;
   margin:0px;
   padding: 0px;
   padding-top: 0px;
+  margin-left:auto;
+  margin-right:auto;
 }
   
 .button {
@@ -30,9 +36,9 @@ h1 {
     
     
 .search {
-    width: 200px;
+    width: 220px;
     height: 40px;
-    margin-right: 15px;
+    margin-right: 25px;
     padding-top: 18px;
     margin-left:auto;
    
@@ -54,7 +60,8 @@ img {
   margin-top:8px;
 }
 .navbar {
-    background-image: linear-gradient(#54B4EB, #2FA4E7 60%, #1D9CE5);
+/*    blue-light blue -blue gradient */
+    background-image: linear-gradient(#2FA4E7, #e6f3fb 50%,#2FA4E7);
     border-top-left-radius: 12px; border-top-right-radius: 12px;
     border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
     /* center navbar class */

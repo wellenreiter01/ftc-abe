@@ -4,4 +4,5 @@ abe.sqlite*
 tmpd
 MANIFEST
 build
+.directory
 dist
