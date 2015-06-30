@@ -287,7 +287,7 @@ class Abe:
         body = page['body']
         body += [
             '<table class="chain_table">\n',
-            '<tr><th>Currency</th><th>Code</th><th>Block</th><th>Time</th>',
+            '<tr><th>Currency</th><th>Code</th><th>Block</th><th>Time(UTC)</th>',
             '<th>Started</th><th>Age (days)</th><th>Coins Created</th>',
             '</tr>\n']
         now = time.time() - EPOCH1970
@@ -468,7 +468,7 @@ class Abe:
         extra = False
         #extra = True
         body += ['<p>', nav, '</p>\n',
-                 '<table class="block_table"><caption class="table_headline"> Latest Blocks </caption><tr><th>Block</th><th>Approx. Time</th>',
+                 '<table class="block_table"><caption class="table_headline"> Latest Blocks </caption><tr><th>Block</th><th>Approx. Time (UTC)</th>',
                  '<th>Transactions</th><th>Value Out</th>',
                  '<th>Difficulty</th><th>Outstanding</th>',
                  '</tr>\n']
@@ -593,7 +593,7 @@ class Abe:
 	    '<table class=block_detail> '
 	    '<caption class="table_headline"> Block Details</caption>'	
             '<tr><td>Transaction Merkle Root:</td><td>', hashMerkleRoot, '</td></tr>\n',
-            '<tr><td>Time:</td><td>', nTime, ' (', format_time(nTime), ')</td></tr>\n',
+            '<tr><td>Time(UTC):</td><td>', nTime, ' (', format_time(nTime), ')</td></tr>\n',
             '<tr><td>Difficulty:</td><td>', format_difficulty(util.calculate_difficulty(nBits)),
             ' (Bits: %x)' % (nBits,), '</td></tr>\n',
             '<tr><td>Nonce:</td><td>', nNonce, '</td></tr>\n',
@@ -862,7 +862,10 @@ class Abe:
         is_coinbase = None
 
         body += abe.short_link(page, 't/' + hexb58(tx_hash[:14]))
-        body += ['<p>Hash: ', tx_hash, '<br />\n']
+#todo: format output
+        body += ['<table class=transaction_table> '
+	    '<caption class="table_headline"> Transaction Details</caption>'	
+	    '<tr><td>Hash:</td><td> ', tx_hash, '</td></tr>\n']
         chain = None
         for row in block_rows:
             (name, in_longest, nTime, height, blk_hash, tx_pos) = (
@@ -876,34 +879,34 @@ class Abe:
                 abe.log.warn('Transaction ' + tx_hash + ' in multiple chains: '
                              + name + ', ' + chain['name'])
             body += [
-                'Appeared in <a href="../block/', blk_hash, '">',
+                '<tr><td>Appeared: </td><td> <a href="../block/', blk_hash, '">',
                 escape(name), ' ',
                 height if in_longest else [blk_hash[:10], '...', blk_hash[-4:]],
-                '</a> (', format_time(nTime), ')<br />\n']
+                '</a> (', format_time(nTime), ')</td></tr>\n']
 
         if chain is None:
             abe.log.warn('Assuming default chain for Transaction ' + tx_hash)
             chain = abe.get_default_chain()
 
         body += [
-            '<br />\n',
-            'Number of inputs: ', len(in_rows),
-            ' (<a href="#inputs">Jump to inputs</a>)<br />\n',
-            'Number of outputs: ', len(out_rows),
-            ' (<a href="#outputs">Jump to outputs</a>)<br />\n',
-            '<br />\n',
-            'Total in: ', format_satoshis(value_in, chain), '<br />\n',
-            'Total out: ', format_satoshis(value_out, chain), '<br />\n',
-            '<br />\n',
-            'Size: ', tx_size, ' bytes<br />\n',
-            'Fee: ', format_satoshis(0 if is_coinbase else
+            '<tr><td>\n',
+            'Number of inputs:</td><td> ', len(in_rows),
+            ' (<a href="#inputs">Jump to inputs</a>)</td></tr>\n',
+            '<tr><td>Number of outputs:</td><td> ', len(out_rows),
+            ' (<a href="#outputs">Jump to outputs</a>)</td></tr>\n',
+            '<tr><td>Total in: </td><td>', format_satoshis(value_in, chain), '</td></tr>\n',
+            '<tr><td>Total out: </td><td>', format_satoshis(value_out, chain), '</td></tr>\n',
+            '<tr><td>Size: </td><td>', tx_size, ' bytes</td></tr>\n',
+            '<tr><td>Fee: </td><td>', format_satoshis(0 if is_coinbase else
                                      (value_in and value_out and
                                       value_in - value_out), chain),
-            '<br />\n',
-            '<br />\n',
-            '<a href="../rawtx/', tx_hash, '">Raw transaction</a><br />\n']
+            '</td></tr>\n',
+            '<tr><td> </td><td>\n',
+            '<a href="../rawtx/', tx_hash, '">Raw transaction</a></td></tr>\n']
         body += ['</p>\n',
-                 '<a name="inputs"><h3>Inputs</h3></a>\n<table>\n',
+              
+                 '<table class="transaction_table">\n',
+                 '<caption class="table_headline"><a name="inputs">Inputs</caption</a>',
                  '<tr><th>Index</th><th>Previous output</th><th>Amount</th>',
                  '<th>From address</th>']
         if abe.store.keep_scriptsig:
@@ -913,7 +916,9 @@ class Abe:
             row_to_html(row, 'i', 'o',
                         'Generation' if is_coinbase else 'Unknown')
         body += ['</table>\n',
-                 '<a name="outputs"><h3>Outputs</h3></a>\n<table>\n',
+                 
+                 '<table class="transaction_table">\n',
+                 '<caption class="table_headline"><a name="outputs">Outputs</a></caption>\n'
                  '<tr><th>Index</th><th>Redeemed at input</th><th>Amount</th>',
                  '<th>To address</th><th>ScriptPubKey</th></tr>\n']
         for row in out_rows:
@@ -972,6 +977,8 @@ class Abe:
             count[txpoint['is_in']] += 1
 
         txpoints = []
+        in_value = []
+        out_value =[]
         max_rows = abe.address_history_rows_max
         in_rows = abe.store.selectall("""
             SELECT
@@ -1000,9 +1007,7 @@ class Abe:
         too_many = False
         if max_rows >= 0 and len(in_rows) > max_rows:
             too_many = True
-            # TODO add code to display wallet balance only,instead of 
-            #returning an error
-	  
+            
 
         if not too_many:
             out_rows = abe.store.selectall("""
@@ -1031,8 +1036,45 @@ class Abe:
                 too_many = True
 
         if too_many:
+	    chain_id = in_rows[0][1]
+	    # if we don't know the chain assume default chain
+            if chain_id is None:
+	      abe.log.warn('Assuming default chain for Calculation ')
+	      chain_id = abe.get_default_chain()
+            
+            out_value = abe.store.selectall("""
+             SELECT
+               sum(prevout.txout_value)
+              FROM chain_candidate cc
+              JOIN block b ON (b.block_id = cc.block_id)
+              JOIN block_tx ON (block_tx.block_id = b.block_id)
+              JOIN tx ON (tx.tx_id = block_tx.tx_id)
+              JOIN txin ON (txin.tx_id = tx.tx_id)
+              JOIN txout prevout ON (txin.txout_id = prevout.txout_id)
+              JOIN pubkey ON (pubkey.pubkey_id = prevout.pubkey_id)
+              WHERE pubkey.pubkey_hash = ?
+              AND cc.in_longest = 1""""" ,(dbhash,))
+	    in_value = abe.store.selectall("""
+	    SELECT
+                  (sum(txout.txout_value))
+                  FROM chain_candidate cc
+                  JOIN block b ON (b.block_id = cc.block_id)
+                  JOIN block_tx ON (block_tx.block_id = b.block_id)
+                  JOIN tx ON (tx.tx_id = block_tx.tx_id)
+                  JOIN txout ON (txout.tx_id = tx.tx_id)
+                  JOIN pubkey ON (pubkey.pubkey_id = txout.pubkey_id)
+                 WHERE pubkey.pubkey_hash = ?
+                   AND cc.in_longest = 1""""" ,(dbhash,))
+	    balance= in_value[0][0] -out_value[0][0]
             body += ["<p>I'm sorry, this address has too many records "
-                     'to display.</p> <div class="button"><a href="/"> Home</a></div>']
+                     ' to display.</p> ']
+	    body += ['<table class="wallet_info">'
+		 '<caption class="table_headline">Wallet Info </caption>'
+		 '<tr><td>Balance:</td><td>',format_satoshis(balance, chain_id),chain_id,'</td></tr>'
+		 '<tr><td>Received:</td><td>', format_satoshis(in_value[0][0],chain_id), '</td></tr>\n',
+                 '<tr><td>Sent:</td><td>', format_satoshis(out_value[0][0],chain_id), '</td></tr>\n',
+                 '</table><a href="/"> <p><div class="button">Home</a></div></p>'
+		 ]
             return
 
         rows = []
@@ -1104,8 +1146,7 @@ class Abe:
         body += ['<table class="transaction_table">\n'
 		 '<caption class="table_headline"> Transactions</caption>\n'
 		 '<tr><th>Transaction</th><th>Block</th>\n'
-                 '<th>Approx. Time</th><th>Amount</th><th>Balance</th>\n'
-                 '<th>Currency</th></tr>\n']
+                 '<th>Approx. Time (UTC)</tr>\n']
 
         for elt in txpoints:
             chain = chains[elt['chain_id']]
