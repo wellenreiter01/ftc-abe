@@ -36,6 +36,7 @@ import readconf
 import deserialize
 import util  # Added functions.
 import base58
+from decimal import *
 
 __version__ = version.__version__
 
@@ -377,6 +378,49 @@ class Abe:
         if handler is None:
             raise PageNotFound()
         handler(page)
+        
+    def format_coins_destroyed(abe,height,chain):
+	coin_days= 0
+	newTime=0
+	      
+	rows = abe.store.selectall("""
+	      SELECT b.block_height,b.block_nTime,tx.prevout_id, tx.txin_value 
+                  FROM chain_candidate cc
+                  LEFT JOIN block b ON (b.block_id = cc.block_id)
+                  LEFT JOIN txin_detail tx ON(tx.block_id = cc.block_id)
+                 WHERE cc.chain_id = ?
+                   AND cc.block_height = ?
+                   AND cc.in_longest = 1
+            """, (chain['id'], height))
+	for row in rows:
+	    (block,
+	    time, 
+	    id_last,
+	    value) = row
+	    
+	    
+	    if id_last != None:
+
+	      rows2 = abe.store.selectall("""
+		SELECT b.block_nTime
+                  FROM chain_candidate cc
+                  LEFT JOIN txout_detail tx ON(tx.block_id = cc.block_id)
+                  LEFT JOIN block b ON (b.block_id = cc.block_id)
+                 WHERE cc.chain_id = ?
+                   AND tx.txout_id = ?
+                   AND cc.in_longest = 1
+            """, (chain['id'], id_last))
+	      
+	      
+	      for row2 in rows2:
+		time_diff_days= round(time-row2[0])/86400
+		
+		
+		days_destroyed = round(value/100000000, 2)*time_diff_days
+		coin_days += days_destroyed
+	      
+	return round(coin_days,2)
+	
 
     def handle_chain(abe, page):
         symbol = wsgiref.util.shift_path_info(page['env'])
@@ -470,7 +514,7 @@ class Abe:
         body += ['<p>', nav, '</p>\n',
                  '<table class="block_table"><caption class="table_headline"> Latest Blocks </caption><tr><th>Block</th><th>Approx. Time (UTC)</th>',
                  '<th>Transactions</th><th>Value Out</th>',
-                 '<th>Difficulty</th><th>Outstanding</th>',
+                 '<th>Difficulty</th><th>Coin days destroyed</th>',
                  '</tr>\n']
         for row in rows:
             (hash,
@@ -488,11 +532,11 @@ class Abe:
                 '<tr><td><a href="', page['dotdot'], 'block/',
                 abe.store.hashout_hex(hash),
                 '">', height, '</a>'
-                '</td><td>', format_time(int(nTime)),
+               '</td><td>', format_time(int(nTime)),
                 '</td><td>', num_tx,
-                '</td><td>', format_satoshis(value_out, chain),
-                '</td><td>', util.calculate_difficulty(int(nBits)),
-                '</td><td>', format_satoshis(satoshis, chain),
+                '</td><td align=right>', format_satoshis(value_out, chain),
+                '</td><td align=right>', util.calculate_difficulty(int(nBits)),
+                '</td><td align=right class=last>', abe.format_coins_destroyed(height,chain) ,
                 '</td></tr>\n']
 
         body += ['</table>\n<p>', nav, '</p>\n']

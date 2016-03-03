@@ -125,5 +125,9 @@ td {
     border-width: 0px;
     border-style: solid;
 }
+td.last {
+    padding-right: 20px;
+}
+
 
 
